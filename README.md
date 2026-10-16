@@ -43,7 +43,7 @@ Vite runs at **http://localhost:5173** and proxies `/api` requests to Express on
 - Add, list, and delete courses. Course IDs must be unique.
 - Enroll existing students in existing courses, prevent duplicate enrollments, and view course rosters.
 - Deleting a student or course removes its related enrollments.
-- Responsive Vue Router views share server data through a Pinia store and show loading, empty, success, validation, and error states.
+- Responsive Vue Router views share server data through a Pinia store and show loading, empty, success, validation, and error states. Short page, row, and feedback transitions respect reduced-motion preferences.
 - MongoDB is the only persistence layer. `backend/students.json` from the starter is not used.
 
 ## API

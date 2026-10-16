@@ -2,5 +2,6 @@ node_modules/
 dist/
 images/
 slides/
+references/
 .DS_Store
 npm-debug.log*

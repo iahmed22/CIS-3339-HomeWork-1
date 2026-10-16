@@ -20,8 +20,12 @@ watch(() => store.notice, (notice) => {
     <main class="main-area">
       <header class="topbar"><div class="breadcrumb"><span>Workspace</span><span class="crumb-slash">/</span><strong>{{ pageTitle }}</strong></div><div class="topbar-user"><span class="campus-avatar">UH</span><span><strong>Cougar Campus</strong><small>Student administration</small></span></div></header>
       <div v-if="store.notice" class="toast" :class="store.notice.type" role="status"><span>{{ store.notice.type === 'success' ? '✓' : '!' }}</span>{{ store.notice.message }}<button aria-label="Dismiss message" @click="store.clearNotice">×</button></div>
-      <RouterView />
-      <footer class="footer"><span>Cougar Student Hub</span><span>Student information, thoughtfully organized.</span></footer>
+      <RouterView v-slot="{ Component, route: viewRoute }">
+        <Transition name="page" mode="out-in">
+          <component :is="Component" :key="viewRoute.path" />
+        </Transition>
+      </RouterView>
+      <footer class="footer"><span>Cougar Registrar</span><span>Student · Course · Enrollment</span></footer>
     </main>
   </div>
 </template>
