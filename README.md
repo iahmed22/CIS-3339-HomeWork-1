@@ -1,71 +1,83 @@
-# CIS 3339 Homework 1 — Cougar Student Hub
+# CIS 3339 Homework 1
 
-A full stack student management application built with Vue 3, Vue Router, Pinia, Express, and MongoDB Community Edition. The app provides student search and management, a course catalog, and course enrollment rosters.
+Student, course, and enrollment management app built with Vue 3, Express, and MongoDB.
 
-## Requirements
+## Run the app
 
-- Node.js 20.19+ or 22.12+ and npm
-- MongoDB Community Edition running locally
+You need **Node.js 20.19+ or 22.12+**, npm, and **MongoDB Community Edition** installed locally.
 
-The committed `.env` uses `mongodb://127.0.0.1:27017/cis3339_homework1` and port `3000`. Change these values only if your local MongoDB uses a different address or port. No cloud database or credentials are required.
+1. Start MongoDB Community Edition. On Windows, start the `MongoDB` service from the Services app. On macOS with Homebrew, run `brew services start mongodb-community`. On Linux, run `sudo systemctl start mongod`.
+2. Open a terminal in this project folder (the folder containing `package.json`).
+3. Install dependencies, build the frontend, and start the server:
 
-## Start MongoDB
+   ```bash
+   npm install
+   npm run build
+   npm start
+   ```
 
-Install MongoDB Community Edition for your operating system and start its local service. On Windows, the default MSI installation normally registers MongoDB as a Windows service; start the **MongoDB Server** service from Services if it is not already running. On macOS with Homebrew, run `brew services start mongodb-community`. On Linux, run `sudo systemctl start mongod`.
+4. Open **http://localhost:3000**.
 
-## Install and run
+Keep the terminal open while using the app. Press `Ctrl+C` there to stop the server.
 
-From the project root:
+In PowerShell, if the `npm` command is blocked by script policy, use `npm.cmd` in place of `npm`.
+
+## Database configuration
+
+The included `.env` file is ready for a local MongoDB installation:
+
+```env
+MONGODB_URI=mongodb://127.0.0.1:27017/cis3339_homework1
+PORT=3000
+```
+
+The app connects to MongoDB at startup and creates its collections and unique indexes automatically. No Atlas account, database setup, migration, seed data, or import step is needed. Records remain in MongoDB when the server is restarted.
+
+## Using the app
+
+- **Students:** add a student, search by name or ID, and delete a record. Student IDs must be unique.
+- **Courses:** add, view, and delete courses. Course IDs must be unique.
+- **Enrollment:** choose a student and course to enroll them, then select a course to view its roster. Duplicate enrollments are rejected.
+
+Deleting a student or a course also deletes the related enrollments.
+
+## Development mode (optional)
+
+Run the backend and frontend in separate terminals from the project folder. Start MongoDB first.
+
+Terminal 1:
 
 ```bash
-npm install
-npm run build
 npm start
 ```
 
-Open **http://localhost:3000**. Express serves the compiled Vue application and API from the same origin. The MongoDB collections and unique indexes are initialized automatically on startup, including when the database is empty. Student, course, and enrollment records persist in MongoDB after restarting the server.
-
-For frontend development, use two terminals after installing dependencies:
-
-```bash
-npm start
-```
+Terminal 2:
 
 ```bash
 npm run dev
 ```
 
-Vite runs at **http://localhost:5173** and proxies `/api` requests to Express on port 3000.
+Open **http://localhost:5173**. Vite forwards `/api` requests to the backend at `http://localhost:3000`.
 
-## Features
+## API routes
 
-- Add, search by name or ID, list, and delete students. Student IDs must be unique.
-- Add, list, and delete courses. Course IDs must be unique.
-- Enroll existing students in existing courses, prevent duplicate enrollments, and view course rosters.
-- Deleting a student or course removes its related enrollments.
-- Responsive Vue Router views share server data through a Pinia store and show loading, empty, success, validation, and error states. Short page, row, and feedback transitions respect reduced-motion preferences.
-- MongoDB is the only persistence layer. `backend/students.json` from the starter is not used.
-
-## API
-
-| Method | Endpoint | Purpose |
+| Method | Route | Action |
 | --- | --- | --- |
-| GET | `/api/students?search=` | List/search students by name or exact ID |
-| POST | `/api/students` | Add student (`name`, `id`, `phone`, `zip`) |
-| DELETE | `/api/students/:id` | Delete a student and their enrollments |
-| GET | `/api/courses` | List courses |
-| POST | `/api/courses` | Add course (`courseId`, `name`) |
-| DELETE | `/api/courses/:id` | Delete a course and its enrollments |
-| GET | `/api/enrollments?courseId=` | List enrollments or filter by course |
-| POST | `/api/enrollments` | Enroll (`studentId`, `courseId`) |
+| `GET` | `/api/students?search=` | List students or search by name/ID |
+| `POST` | `/api/students` | Add a student |
+| `DELETE` | `/api/students/:id` | Delete a student and their enrollments |
+| `GET` | `/api/courses` | List courses |
+| `POST` | `/api/courses` | Add a course |
+| `DELETE` | `/api/courses/:id` | Delete a course and its enrollments |
+| `GET` | `/api/enrollments?courseId=` | List enrollments, optionally filtered by course |
+| `POST` | `/api/enrollments` | Enroll a student in a course |
 
-Duplicate IDs and enrollments return HTTP 409. Invalid input returns HTTP 400; missing records return HTTP 404.
+The API returns `400` for invalid input, `404` when a record is missing, and `409` for a duplicate ID or enrollment.
 
-## Project layout
+## Troubleshooting
 
-```text
-src/                 Vue app, router, views, reusable navigation, Pinia store
-backend/server.js    Express API, Mongoose schemas, and production static hosting
-.env                 Local MongoDB connection and port
-vite.config.js       Vite build and development API proxy
-```
+- **MongoDB connection error:** make sure MongoDB Community Edition is running and the URI in `.env` is correct.
+- **Port 3000 is already in use:** stop the other process or change `PORT` in `.env`.
+- **Frontend changes do not appear in production:** run `npm run build` again, then restart with `npm start`.
+
+`node_modules/` and `dist/` are ignored by Git. Do not include `node_modules/` in a submission; install it locally with `npm install` when you need to run the app.
